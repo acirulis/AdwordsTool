@@ -18,6 +18,28 @@ class AdwordsAPI(object):
         r = customer_sync_service.get(selector)
         return r
 
+    def repAdGroupPerformance(self,customerId, reportDate):
+        self.client.SetClientCustomerId(customerId)
+        report_downloader = self.client.GetReportDownloader(version=self.API_VERSION)
+        report_query = ('SELECT CampaignId,AdGroupId, BounceRate, Ctr, Impressions, Clicks, ConversionRate, RelativeCtr '
+                        'FROM ADGROUP_PERFORMANCE_REPORT '
+                        'DURING ' + reportDate + ',' + reportDate)
+        return report_downloader.DownloadReportAsStringWithAwql(
+            report_query, 'CSV', skip_report_header=True, skip_column_header=True,
+            skip_report_summary=True, include_zero_impressions=True)
+
+    def repCriteriaPerformance(self, customerId, reportDate):
+        self.client.SetClientCustomerId(customerId)
+        report_downloader = self.client.GetReportDownloader(version=self.API_VERSION)
+        report_query = ('SELECT CampaignId,AdGroupId, QualityScore, Ctr, Impressions, Clicks, ConversionRate '
+                        'FROM CRITERIA_PERFORMANCE_REPORT '
+                        'WHERE Status IN [ENABLED] ' 
+                        'DURING ' + reportDate + ',' + reportDate)
+        return report_downloader.DownloadReportAsStringWithAwql(
+            report_query, 'CSV', skip_report_header=True, skip_column_header=True,
+            skip_report_summary=True, include_zero_impressions=True)
+
+
     def repCmpPerf(self, customerId, repDate):
         self.client.SetClientCustomerId(customerId)
         report_downloader = self.client.GetReportDownloader(version=self.API_VERSION)
