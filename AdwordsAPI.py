@@ -21,7 +21,8 @@ class AdwordsAPI(object):
     def repKeywordPerformance(self, customerId, reportDate):
         self.client.SetClientCustomerId(customerId)
         report_downloader = self.client.GetReportDownloader(version=self.API_VERSION)
-        report_query = ('SELECT CampaignId,AdGroupId, QualityScore, Impressions '
+        #Criteria - Keyword name
+        report_query = ('SELECT AdGroupId, QualityScore, Impressions '
                         'FROM KEYWORDS_PERFORMANCE_REPORT '
                         'WHERE Impressions > 0 '
                         'DURING ' + reportDate + ',' + reportDate)
