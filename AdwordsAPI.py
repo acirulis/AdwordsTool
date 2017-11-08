@@ -18,6 +18,17 @@ class AdwordsAPI(object):
         r = customer_sync_service.get(selector)
         return r
 
+    def repKeywordPerformance(self, customerId, reportDate):
+        self.client.SetClientCustomerId(customerId)
+        report_downloader = self.client.GetReportDownloader(version=self.API_VERSION)
+        report_query = ('SELECT CampaignId,AdGroupId, QualityScore, Impressions '
+                        'FROM KEYWORDS_PERFORMANCE_REPORT '
+                        'WHERE Impressions > 0 '
+                        'DURING ' + reportDate + ',' + reportDate)
+        return report_downloader.DownloadReportAsStringWithAwql(
+            report_query, 'CSV', skip_report_header=True, skip_column_header=True,
+            skip_report_summary=True, include_zero_impressions=True)
+
     def repAdGroupPerformance(self,customerId, reportDate):
         self.client.SetClientCustomerId(customerId)
         report_downloader = self.client.GetReportDownloader(version=self.API_VERSION)
