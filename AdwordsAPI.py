@@ -18,6 +18,17 @@ class AdwordsAPI(object):
         r = customer_sync_service.get(selector)
         return r
 
+    def repAccountPerformance(self, CustomerId, reportDate):
+        self.client.SetClientCustomerId(CustomerId)
+        report_downloader = self.client.GetReportDownloader(version=self.API_VERSION)
+        report_query = ('SELECT ExternalCustomerId, Clicks, Impressions '
+                        'FROM ACCOUNT_PERFORMANCE_REPORT '
+                        'WHERE Impressions > 0 '
+                        'DURING ' + reportDate + ',' + reportDate)
+        return report_downloader.DownloadReportAsStringWithAwql(
+            report_query, 'CSV', skip_report_header=True, skip_column_header=True,
+            skip_report_summary=True, include_zero_impressions=False)
+
     def repKeywordPerformance(self, customerId, reportDate):
         self.client.SetClientCustomerId(customerId)
         report_downloader = self.client.GetReportDownloader(version=self.API_VERSION)
@@ -128,7 +139,7 @@ class AdwordsAPI(object):
         try:
             managed_customer_service = self.client.GetService('ManagedCustomerService', version=self.API_VERSION)
             selector = {
-                'fields': ['CustomerId', 'Name', 'AccountLabels'],
+                'fields': ['CustomerId', 'Name', 'AccountLabels', 'CanManageClients'],
             }
             data = managed_customer_service.get(selector)
             for account in data.entries:
@@ -138,6 +149,7 @@ class AdwordsAPI(object):
                 el = {}
                 el['account_name'] = account_name
                 el['customer_id'] = account.customerId
+                el['canManageClients'] = account.canManageClients
                 accounts.append(el)
 
         except errors.GoogleAdsError as e:
