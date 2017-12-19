@@ -50,7 +50,7 @@ for single_date in daterange(start_date, end_date):
     raw = AW.repAdGroupPerformance(CustomerId, date_to_process)
     df = pd.read_csv(StringIO(raw),
                      names=['CampaignId', 'AdGroupId', 'BounceRate', 'Ctr', 'Impressions', 'Clicks', 'ConversionRate',
-                            'RelativeCtr'])
+                            'RelativeCtr', 'SearchRankLostImpressionShare', 'AdGroupType'])
     print('Inserting into db...')
     for index, row in df.iterrows():
         if row['AdGroupId'] in QS.index:
@@ -70,7 +70,9 @@ for single_date in daterange(start_date, end_date):
             'ConversionRate': row['ConversionRate'],
             'RelativeCtr': row['RelativeCtr'],
             'QS_mean': QS_mean,
-            'QS_weighted': QS_w
+            'QS_weighted': QS_w,
+            'AdGroupType': row['AdGroupType'],
+            'SearchRankLostImpressionShare': row['SearchRankLostImpressionShare']
         }
         DB.insert('AdgroupPerformanceReport', r)
 

@@ -24,6 +24,7 @@ class AdwordsAPI(object):
         #Criteria - Keyword name
         report_query = ('SELECT AdGroupId, QualityScore, Impressions '
                         'FROM KEYWORDS_PERFORMANCE_REPORT '
+#                        'WHERE Impressions > 0 and IsNegative IN [true, false] '
                         'WHERE Impressions > 0 '
                         'DURING ' + reportDate + ',' + reportDate)
         return report_downloader.DownloadReportAsStringWithAwql(
@@ -33,7 +34,7 @@ class AdwordsAPI(object):
     def repAdGroupPerformance(self,customerId, reportDate):
         self.client.SetClientCustomerId(customerId)
         report_downloader = self.client.GetReportDownloader(version=self.API_VERSION)
-        report_query = ('SELECT CampaignId,AdGroupId, BounceRate, Ctr, Impressions, Clicks, ConversionRate, RelativeCtr '
+        report_query = ('SELECT CampaignId,AdGroupId, BounceRate, Ctr, Impressions, Clicks, ConversionRate, RelativeCtr, SearchRankLostImpressionShare, AdGroupType '
                         'FROM ADGROUP_PERFORMANCE_REPORT '
                         'DURING ' + reportDate + ',' + reportDate)
         return report_downloader.DownloadReportAsStringWithAwql(
